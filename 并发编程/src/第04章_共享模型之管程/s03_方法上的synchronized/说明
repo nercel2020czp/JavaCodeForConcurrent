@@ -1,0 +1,23 @@
+class Test{
+	public synchronized void test() {
+	}
+}
+等价于
+class Test{
+	public void test() {
+		synchronized(this) {
+		}
+	}
+}
+---------------------------------------------
+class Test{
+	public synchronized static void test() {
+	}
+}
+等价于
+class Test{
+	public static void test() {
+		synchronized(Test.class) {
+		}
+	}
+}

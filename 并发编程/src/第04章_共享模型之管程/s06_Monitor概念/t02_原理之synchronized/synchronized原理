@@ -1,0 +1,51 @@
+synchronized 原理
+	static final Object lock = new Object();
+	static int counter = 0;
+	public static void main(String[] args) {
+		synchronized (lock) {
+			counter++;
+		}
+	}
+
+对应的字节码为:	
+	public static void main(java.lang.String[]);
+		descriptor: ([Ljava/lang/String;)V
+		flags: ACC_PUBLIC, ACC_STATIC
+		Code:
+			stack=2, locals=3, args_size=1
+				0: getstatic #2 // <- lock引用 （synchronized开始）
+				3: dup
+				4: astore_1 // lock引用 -> slot 1
+				5: monitorenter // 将 lock对象 MarkWord 置为 Monitor 指针
+				6: getstatic #3 // <- i
+				9: iconst_1 // 准备常数 1
+				10: iadd // +1
+				11: putstatic #3 // -> i
+				14: aload_1 // <- lock引用
+				15: monitorexit // 将 lock对象 MarkWord 重置, 唤醒 EntryList
+				16: goto 24
+				19: astore_2 // e -> slot 2
+				20: aload_1 // <- lock引用
+				21: monitorexit // 将 lock对象 MarkWord 重置, 唤醒 EntryList
+				22: aload_2 // <- slot 2 (e)
+				23: athrow // throw e
+				24: return
+				Exception table:
+				from to target type
+				6 16 19 any
+				19 22 19 any
+				LineNumberTable:
+				line 8: 0
+				line 9: 6
+				line 10: 14
+				line 11: 24
+				LocalVariableTable:
+				Start Length Slot Name Signature
+				0 25 0 args [Ljava/lang/String;
+				StackMapTable: number_of_entries = 2
+				frame_type = 255 /* full_frame */
+				offset_delta = 19
+				locals = [ class "[Ljava/lang/String;", class java/lang/Object ]
+				stack = [ class java/lang/Throwable ]
+				frame_type = 250 /* chop */
+				offset_delta = 4

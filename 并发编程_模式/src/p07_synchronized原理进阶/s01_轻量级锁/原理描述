@@ -1,0 +1,20 @@
+1. 轻量级锁：
+
+轻量级锁的使用场景：
+	1.如果一个对象虽然有多线程要加锁，但加锁的时间是错开的（也就是没有竞争），
+	    那么可以使用轻量级锁来优化。
+	2.轻量级锁对使用者是透明的，即语法仍然是 synchronized
+	3.假设有两个方法同步块，利用同一个对象加锁
+	
+	static final Object obj = new Object();
+	public static void method1() {
+		synchronized( obj ) {
+			// 同步块 A
+			method2();
+		}
+	}
+	public static void method2() {
+		synchronized( obj ) {
+			// 同步块 B
+		}
+	}

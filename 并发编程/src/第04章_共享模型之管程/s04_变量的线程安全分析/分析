@@ -1,0 +1,46 @@
+4.4 变量的线程安全分析
+  成员变量和静态变量是否线程安全？
+	1.如果它们没有共享，则线程安全
+	2.如果它们被共享了，根据它们的状态是否能够改变，又分两种情况
+		2.1 如果只有读操作，则线程安全
+		2.2 如果有读写操作，则这段代码是临界区，需要考虑线程安全
+		
+
+  局部变量是否线程安全？		
+  1.局部变量是线程安全的
+  2.但局部变量引用的对象则未必
+  	2.1 如果该对象没有逃离方法的作用访问，它是线程安全的
+  	2.2 如果该对象逃离方法的作用范围，需要考虑线程安全
+
+  局部变量线程安全分析
+  	public static void test1() {
+		int i = 10;
+		i++;
+	}
+	
+  每个线程调用 test1() 方法时局部变量 i，会在每个线程的栈帧内存中被创建多份，因此不存在共享
+    public static void test1();
+		descriptor: ()V
+		flags: ACC_PUBLIC, ACC_STATIC
+		Code:
+		stack=1, locals=1, args_size=0
+		0: bipush 10
+		2: istore_0
+		3: iinc 0, 1
+		6: return
+		LineNumberTable:
+		line 10: 0
+		line 11: 3
+		line 12: 6
+		LocalVariableTable:
+		Start Length Slot Name Signature
+		3 4 0 i I
+		
+如图：
+	【见图1.png】
+	
+局部变量的引用稍有不同
+	先看一个成员变量的例子
+	
+
+	
