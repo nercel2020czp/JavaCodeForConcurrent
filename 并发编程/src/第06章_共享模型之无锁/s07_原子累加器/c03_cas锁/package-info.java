@@ -1,0 +1,19 @@
+/**
+ * 
+ */
+/**
+ * @author 15753
+ *
+ */
+package 第06章_共享模型之无锁.s07_原子累加器.c03_cas锁;
+
+/*
+
+18:27:07.198 c.Test42 [Thread-0] - begin...
+18:27:07.202 c.Test42 [Thread-0] - lock...
+18:27:07.198 c.Test42 [Thread-1] - begin...
+18:27:08.204 c.Test42 [Thread-0] - unlock...
+18:27:08.204 c.Test42 [Thread-1] - lock...
+18:27:08.204 c.Test42 [Thread-1] - unlock...
+
+*/

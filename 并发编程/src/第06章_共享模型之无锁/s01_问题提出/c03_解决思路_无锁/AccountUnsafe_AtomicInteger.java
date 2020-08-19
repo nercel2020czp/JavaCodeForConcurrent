@@ -1,8 +1,10 @@
-package 第06章_共享模型之无锁.s01_问题提出;
+package 第06章_共享模型之无锁.s01_问题提出.c03_解决思路_无锁;
+
 //有如下需求，保证 account.withdraw 取款方法的线程安全
 //该实现并不是线程安全的
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 interface Account {
 	// 获取余额
@@ -17,7 +19,7 @@ interface Account {
 	static void demo(Account account) {
 		List<Thread> ts = new ArrayList<>();
 		long start = System.nanoTime();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			ts.add(new Thread(() -> {
 				account.withdraw(10);
 			}));
@@ -35,28 +37,32 @@ interface Account {
 	}
 }
 
+public class AccountUnsafe_AtomicInteger implements Account {
+	private AtomicInteger balance;
 
-class AccountUnsafe implements Account {
-	private Integer balance;
-
-	public AccountUnsafe(Integer balance) {
-		this.balance = balance;
+	public AccountUnsafe_AtomicInteger(Integer balance) {
+		this.balance = new AtomicInteger(balance);
 	}
 
 	@Override
 	public Integer getBalance() {
-		return balance;
+		return balance.get();
 	}
 
 	@Override
 	public void withdraw(Integer amount) {
-		balance -= amount;
+		while (true) {
+			int prev = balance.get();
+			int next = prev - amount;
+			if (balance.compareAndSet(prev, next)) {
+				break;
+			}
+		}
+		// 可以简化为下面的方法
+		// balance.addAndGet(-1 * amount);
 	}
-}
 
-
-public class Test01_ {
 	public static void main(String[] args) {
-		Account.demo(new AccountUnsafe(10000));
+		Account.demo(new AccountUnsafe_AtomicInteger(100000));
 	}
 }
